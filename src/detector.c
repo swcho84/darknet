@@ -26,9 +26,9 @@ static int coco_ids[] = { 1,2,3,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,21,22,
 void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, int ngpus, int clear, int dont_show, int calc_map, float thresh, float iou_thresh, int mjpeg_port, int show_imgs, int benchmark_layers, char* chart_path)
 {
     list *options = read_data_cfg(datacfg);
-    char *train_images = option_find_str(options, "train", "data/train.txt");
-    char *valid_images = option_find_str(options, "valid", train_images);
-    char *backup_directory = option_find_str(options, "backup", "/backup/");
+    char *train_images = option_find_str(options, "train", "/home/drswchorndlaptop/darknet/data/train.txt");
+    char *valid_images = option_find_str(options, "valid", "/home/drswchorndlaptop/darknet/data/test.txt");
+    char *backup_directory = option_find_str(options, "backup", "/home/drswchorndlaptop/darknet/data/backup/");
 
     network net_map;
     if (calc_map) {
@@ -383,7 +383,7 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
         //if (i % 1000 == 0 || (i < 1000 && i % 100 == 0)) {
         //if (i % 100 == 0) {
         if ((iteration >= (iter_save + 10000) || iteration % 10000 == 0) ||
-            (iteration >= (iter_save + 1000) || iteration % 1000 == 0) && net.max_batches < 10000)
+            (iteration >= (iter_save + 1000) || iteration % 1000 == 0))
         {
             iter_save = iteration;
 #ifdef GPU
@@ -392,6 +392,10 @@ void train_detector(char *datacfg, char *cfgfile, char *weightfile, int *gpus, i
             char buff[256];
             sprintf(buff, "%s/%s_%d.weights", backup_directory, base, iteration);
             save_weights(net, buff);
+        }
+        else
+        {
+            printf("currIter:(%d,%d)\n", iteration, iter_save);
         }
 
         if (iteration >= (iter_save_last + 100) || (iteration % 100 == 0 && iteration > 1)) {
